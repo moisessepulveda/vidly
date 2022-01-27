@@ -1,23 +1,27 @@
 import React, {Component} from 'react';
+import _ from 'lodash';
+
 import {getMovies} from "../services/fakeMovieService";
-import Like from "./like";
 import Pagination from "./pagination";
 import {paginate} from "../utils/paginate";
 import ListGroup from "./listGroup";
 import {getGenres} from "../services/fakeGenreService";
 import MoviesTable from "./moviesTable";
 
+
 class Movies extends Component {
+
     state = {
         movies: [],
         genres: [],
         selectedPage: 1,
         selectedGenre: null,
-        pageSize: 3
+        pageSize: 3,
+        sortColumn: {path: "title", order: "asc"}
     }
 
     componentDidMount() {
-        const genres = [{name: "all genres"}, ...getGenres()];
+        const genres = [{_id: "", name: "all genres"}, ...getGenres()];
         this.setState({movies: getMovies(), genres: genres});
     }
 
@@ -43,6 +47,10 @@ class Movies extends Component {
         this.setState({selectedGenre: genre});
     }
 
+    handleSort = (sortColumn) => {
+        this.setState({sortColumn});
+    }
+
     moviesByGenre(movies, selectedGenre) {
 
         return (selectedGenre && selectedGenre._id)
@@ -54,16 +62,24 @@ class Movies extends Component {
         return paginate(movies, selectedPage, pageSize);
     }
 
-    render() {
-        const {genres, selectedGenre, selectedPage, pageSize} = this.state;
+    getPageData() {
+        const {selectedGenre, selectedPage, pageSize, sortColumn} = this.state;
         let {movies} = this.state;
 
         movies = this.moviesByGenre(movies, selectedGenre);
         const itemsCount = movies.length;
 
-        movies = this.paginateResults(movies, selectedPage, pageSize);
+        const sorted = _.orderBy(movies, [sortColumn.path], [sortColumn.order]);
 
-        if (movies.length === 0) return (<p>no hay peliculas en la lista</p>);
+        movies = this.paginateResults(sorted, selectedPage, pageSize);
+
+        return {totalCount: itemsCount, data: movies};
+    }
+
+    render() {
+        const {data, totalCount} = this.getPageData();
+
+        if (data.length === 0) return (<p>no hay peliculas en la lista</p>);
 
         return (
             <>
@@ -71,23 +87,25 @@ class Movies extends Component {
                     <div className="row">
                         <div className="col-4">
                             <ListGroup
-                                items={genres}
-                                selectedItem={selectedGenre}
+                                items={this.state.genres}
+                                selectedItem={this.state.selectedGenre}
                                 onChangeItem={this.handleGenreChange}
                             />
                         </div>
                         <div className="col-8">
-                            <p>Mostrando un total de {itemsCount} películas</p>
+                            <p>Mostrando un total de {totalCount} películas</p>
 
                             <MoviesTable
-                                movies={movies}
+                                sortColumn={this.state.sortColumn}
+                                movies={data}
                                 onLike={this.handleLike}
                                 onDelete={this.handleDelete}
+                                onSort={this.handleSort}
                             />
 
                             <div className="d-flex justify-content-center">
                                 <Pagination
-                                    itemsCount={itemsCount}
+                                    itemsCount={totalCount}
                                     onPageChange={this.handlePageChange}
                                     pageSize={this.state.pageSize}
                                     selectedPage={this.state.selectedPage}
