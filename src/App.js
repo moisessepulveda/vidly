@@ -1,82 +1,57 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'font-awesome/css/font-awesome.css';
-import Counters from "./components/counters";
 import Navbar from "./components/navbar";
 import {Component} from "react";
+import CounterPage from "./pages/CounterPage";
+import {Link, Route, Routes, Navigate} from "react-router-dom";
+import Like from "./components/like";
+import Movies from "./components/movies";
+import Customers from "./pages/customers";
+import MovieForm from "./pages/movieForm";
+import Rentals from "./pages/rentals";
+import NotFound from "./pages/notFound";
+import LoginForm from "./components/loginForm";
 
 class App extends Component {
 
-    state = {
-        counters: [
-            {id: 1, value: 0},
-            {id: 2, value: 0},
-            {id: 3, value: 0},
-            {id: 4, value: 0},
-        ]
-    }
-
-    constructor() {
-        super();
-        console.log("app constructor");
-    }
-
-    componentDidMount() {
-        // ajax calls
-        console.log("app mounted");
-    }
-
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        console.log(prevProps, prevState);
-    }
-
-
-    handleIncrement = (counter) => {
-        const counters = [...this.state.counters];
-        const index = counters.indexOf(counter);
-        counters[index] = {...counter};
-        counters[index].value++;
-        this.setState({counters: counters});
-    }
-
-    handleDelete = (id) => {
-        this.setState({
-            counters: this.state.counters.filter(item => item.id !== id)
-        })
-    }
-
-    handleReset = () => {
-        const counters = this.state.counters.map(c => {
-            c.value = 0;
-            return c;
-        });
-
-        this.setState({counters});
-    }
-
-    handleDecrement = (counter) => {
-        if(counter.value <= 0) return;
-        const counters = [...this.state.counters];
-        const index = counters.indexOf(counter);
-
-        counters[index] = {...counter};
-        counters[index].value--;
-        this.setState({counters: counters});
-    }
 
     render() {
-        console.log("render");
         return (
             <>
-                <Navbar totalCounters={this.state.counters.filter(c => c.value > 0).length} />
+                <Navbar>
+                    <li className="nav-item">
+                        <Link to="/login" className="nav-link">Login</Link>
+                    </li>
+                    <li className="nav-item">
+                        <Link to="/counters" className="nav-link">Counters</Link>
+                    </li>
+                    <li className="nav-item">
+                        <Link to="/movies" className="nav-link">Movies</Link>
+                    </li>
+                    <li className="nav-item">
+                        <Link to="/customers" className="nav-link">Customers</Link>
+                    </li>
+                    <li className="nav-item">
+                        <Link to="/movie-form" className="nav-link">Movie form</Link>
+                    </li>
+                    <li className="nav-item">
+                        <Link to="/rentals" className="nav-link">Rentals</Link>
+                    </li>
+                </Navbar>
+
                 <main className="container">
-                    <Counters
-                        counters={this.state.counters}
-                        onReset={this.handleReset}
-                        onIncrement={this.handleIncrement}
-                        onDelete={this.handleDelete}
-                        onDecrement={this.handleDecrement}
-                    />
+                    <Routes>
+                        <Route path="/login" element={<LoginForm/>}/>
+                        <Route path="/counters" element={<CounterPage/>}/>
+                        <Route path="/movies" element={<Movies/>} />
+                        <Route path="/customers" element={<Customers/>}/>
+                        <Route path="/movie-form/:id" element={<MovieForm/>}/>
+                        <Route path="/rentals" element={<Rentals/>}/>
+                        <Route path="/not-found" element={<NotFound/>}/>
+                        <Route path="/" element={<Navigate replace to="movies"/>}/>
+                        <Route path="*" element={<NotFound/>}/>
+                    </Routes>
                 </main>
             </>
         )
