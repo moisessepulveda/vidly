@@ -1,21 +1,23 @@
-import React, {Component, useState} from "react";
-import Input from "./input";
+import React from "react";
 import Joi from "joi-browser";
 import Form from "./form";
 
-class LoginForm extends Form {
+class RegisterForm extends Form {
 
     state = {
         data: {
             username: '',
-            password: ''
+            password: '',
+            name: ''
         },
         errors: {}
     }
 
 
     schema = {
-        username: Joi.string().required().label("Username"), password: Joi.string().required().label("Password")
+        username: Joi.string().required().email().label("Username"),
+        password: Joi.string().required().label("Password"),
+        name: Joi.string().required().label("Name"),
     }
 
 
@@ -29,8 +31,9 @@ class LoginForm extends Form {
             <div className="container">
                 <h1>login</h1>
                 <form onSubmit={this.handleSubmit}>
-                    {this.renderInput("username", "Username")}
+                    {this.renderInput("username", "Username", "email")}
                     {this.renderInput("password", "Password", "password")}
+                    {this.renderInput("name", "Name", "name")}
 
 
                     <div className="d-flex justify-content-end mt-5">
@@ -43,7 +46,7 @@ class LoginForm extends Form {
 
 }
 
-export default LoginForm
+export default RegisterForm
 
 
 

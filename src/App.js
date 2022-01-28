@@ -8,10 +8,11 @@ import {Link, Route, Routes, Navigate} from "react-router-dom";
 import Like from "./components/like";
 import Movies from "./components/movies";
 import Customers from "./pages/customers";
-import MovieForm from "./pages/movieForm";
+import MovieForm from "./pages/movieFormPage";
 import Rentals from "./pages/rentals";
 import NotFound from "./pages/notFound";
 import LoginForm from "./components/loginForm";
+import Register from "./pages/register";
 
 class App extends Component {
 
@@ -38,10 +39,14 @@ class App extends Component {
                     <li className="nav-item">
                         <Link to="/rentals" className="nav-link">Rentals</Link>
                     </li>
+                    <li className="nav-item">
+                        <Link to="/register" className="nav-link">Register</Link>
+                    </li>
                 </Navbar>
 
                 <main className="container">
                     <Routes>
+                        <Route path="/register" element={<Register/>}/>
                         <Route path="/login" element={<LoginForm/>}/>
                         <Route path="/counters" element={<CounterPage/>}/>
                         <Route path="/movies" element={<Movies/>} />

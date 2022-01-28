@@ -1,14 +1,11 @@
 import React from "react";
 
-function Input({name, label, value, onChange, error, type = "text"}) {
+function Input({name, label, error, ...rest}) {
     return (
         <div className="form-group">
             <label htmlFor={name}>{label}</label>
             <input
-                value={value}
-                onChange={onChange}
-                autoFocus
-                type={type}
+                {...rest}
                 name={name}
                 id={name}
                 className="form-control"

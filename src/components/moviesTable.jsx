@@ -21,12 +21,16 @@ class MoviesTable extends Component {
         const {movies, onSort, sortColumn} = this.props;
 
         return (
-            <Table
-                columns={this.columns}
-                data={movies}
-                onSort={onSort}
-                sortColumn={sortColumn}
-            />
+            <>
+                {(movies.length === 0) ? (<p>no hay peliculas en la lista</p>) : ""}
+                {(movies.length > 0) &&
+                    <Table
+                    columns={this.columns}
+                    data={movies}
+                    onSort={onSort}
+                    sortColumn={sortColumn}
+                />}
+            </>
         );
     }
 }
